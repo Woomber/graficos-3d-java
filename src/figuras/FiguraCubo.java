@@ -1,5 +1,6 @@
 package figuras;
 
+import matrices.MatrizTraslacion;
 import matrices.plano.Punto3D;
 
 /*
@@ -32,6 +33,10 @@ public class FiguraCubo extends Figura {
                 new Punto3D(0, size, 2*size),
         });
 
+        // Mover al origen
+        for(Punto3D p : getVertices()) {
+            p.transform(new MatrizTraslacion( -25, -25, -75));
+        }
 
         for(int idx = 0; idx < 4; idx++) {
             for(int z = 0; z < 2; z++) {

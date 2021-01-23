@@ -59,11 +59,10 @@ public class MainWindow extends JFrame {
 
         dibujante3D.drawAristas(proyectador.proyectar(
                 figura
-                        //.transform(new MatrizTraslacion(20, 20, -75))
-                        .transform(new MatrizTraslacion(-25, -25, -75))
+                        .transform(new MatrizEscalado(1.1))
                         .transform(new MatrizRotacion(Eje.Y, 30, true))
                         .transform(new MatrizRotacion(Eje.X, -30, true))
-                        .transform(new MatrizTraslacion(0, 0, 75))
+                        .transform(new MatrizTraslacion(40, 40, 100))
         ));
 
         getGraphics().drawImage(dibujante3D.getImage(), 0, 0, this);

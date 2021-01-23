@@ -19,12 +19,7 @@ public class PerspectiveProjection implements Proyectador {
     public List<Arista2D> proyectar(Figura figura) {
 
         for(Punto3D p : figura.getVertices()) {
-            p.transform(new MatrizProyeccionPerspectiva(
-                    new Punto2D(0, 0),
-                    new Punto2D(8, 6),
-                    20,
-                    120
-            ));
+            p.transform(new MatrizProyeccionPerspectiva(20,120));
             double factorZ = p.get(0, 3);
             p.setX(p.getX() / factorZ);
             p.setY(p.getY() / factorZ);
