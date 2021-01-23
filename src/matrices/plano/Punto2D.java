@@ -54,7 +54,7 @@ public class Punto2D extends Matriz {
 
     @Override
     public String toString() {
-        return String.format("Punto3D{x=%f, y=%f}", getX(), getY());
+        return String.format("Punto2D{x=%f, y=%f}", getX(), getY());
     }
 
     @Override

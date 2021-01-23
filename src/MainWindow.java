@@ -7,6 +7,8 @@ import functions.Functions;
 import matrices.*;
 import matrices.plano.Punto2D;
 import matrices.plano.Punto3D;
+import meshes.Mesh2D;
+import meshes.MeshRectangular;
 import projections.ParallelOrthogonalProjection;
 import projections.ParallelProjection;
 import projections.PerspectiveProjection;
@@ -40,7 +42,7 @@ public class MainWindow extends JFrame {
             dibujante3D = new Dibujante3D(new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB), this);
             dibujante3D.setOrigin(new Punto2D(getWidth()/2, getHeight()/2));
 
-            background = new Dibujante3D(new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB), this);
+            background = new Dibujante3D(new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB), this);
             background.setColor(Color.WHITE);
             background.clear();
             background.setOrigin(new Punto2D(getWidth()/2, getHeight()/2));
@@ -50,8 +52,18 @@ public class MainWindow extends JFrame {
             // dibujarProyecciones(3);
 
             // Dibujar una de las curvas (0 al 7)
-            dibujarCurvas(6);
+            // dibujarCurvas(6);
+
+            // Dibujar la malla
+            dibujarMalla();
         }
+    }
+
+    protected void dibujarMalla() {
+        Mesh2D mesh = new MeshRectangular(25, 25, 8);
+        dibujante3D.drawAristas(mesh.getAristas());
+
+        getGraphics().drawImage(dibujante3D.getImage(), 0, 0, this);
     }
 
     protected void dibujarCurvas(int numCurva) {
