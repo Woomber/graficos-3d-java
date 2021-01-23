@@ -1,5 +1,6 @@
 package projections;
 
+import figuras.Curva3D;
 import figuras.Figura;
 import matrices.projection.MatrizProyeccionParalela;
 import matrices.plano.Arista2D;
@@ -36,5 +37,17 @@ public class ParallelProjection implements Proyectador {
             ));
         }
         return proyectadas;
+    }
+
+    @Override
+    public List<Punto2D> proyectar(Curva3D curva) {
+
+        List<Punto2D> proyectados = new ArrayList<>();
+        for(Punto3D p : curva.getPuntos()) {
+            p.transform(new MatrizProyeccionParalela(alpha, beta));
+            proyectados.add(new Punto2D(p.getX(), p.getY()));
+        }
+
+        return proyectados;
     }
 }
