@@ -83,14 +83,18 @@ public class Dibujante3D {
     }
 
     public void clear() {
-        Color c = new Color(color.getRGB(), true);
-        setColor(Color.WHITE);
+        clear(Color.WHITE);
+    }
+
+    public void clear(Color c) {
+        Color oldColor = new Color(color.getRGB(), true);
+        setColor(c);
         for(int x = boundLow.getIntX(); x < boundHigh.getIntX(); x++) {
             for(int y = boundLow.getIntY(); y < boundHigh.getIntY(); y++) {
                 setPixel(x, y);
             }
         }
-        setColor(c);
+        setColor(oldColor);
     }
 
     protected double degToRad(double deg) {

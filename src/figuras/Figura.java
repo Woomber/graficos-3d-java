@@ -17,6 +17,12 @@ public class Figura {
         aristas = new ArrayList<>();
     }
 
+    public Figura(Figura f) {
+        for(Arista3D arista: f.getAristas()) {
+            this.addArista(new Punto3D(arista.getA()), new Punto3D(arista.getB()));
+        }
+    }
+
     public List<Punto3D> getVertices() {
         return vertices;
     }

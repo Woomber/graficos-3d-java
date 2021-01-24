@@ -24,7 +24,7 @@ public class MainWindow extends JFrame {
     protected static final double PROJECTION_ANGLE = Math.atan(-2);
 
     protected Dibujante3D dibujante3D;
-    protected Dibujante3D background;
+    protected Dibujante3D background2D, background3D;
     protected boolean drawn = false;
 
     public MainWindow() {
@@ -42,11 +42,17 @@ public class MainWindow extends JFrame {
             dibujante3D = new Dibujante3D(new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB), this);
             dibujante3D.setOrigin(new Punto2D(getWidth()/2, getHeight()/2));
 
-            background = new Dibujante3D(new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB), this);
-            background.setColor(Color.WHITE);
-            background.clear();
-            background.setOrigin(new Punto2D(getWidth()/2, getHeight()/2));
-            background.setColor(new Color(200, 200, 200));
+            background2D = new Dibujante3D(new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB), this);
+            background2D.setColor(Color.WHITE);
+            background2D.clear();
+            background2D.setOrigin(new Punto2D(getWidth()/2, getHeight()/2));
+            background2D.setColor(new Color(200, 200, 200));
+
+            background3D = new Dibujante3D(new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB), this);
+            background3D.setColor(Color.WHITE);
+            background3D.clear();
+            background3D.setOrigin(new Punto2D(getWidth()/2, getHeight()/2));
+            background3D.setColor(new Color(200, 200, 200));
 
             // Dibujar una de las proyecciones (0 al 3)
             // dibujarProyecciones(3);
@@ -177,9 +183,9 @@ public class MainWindow extends JFrame {
 
     protected void dibujarCurva(List<Punto2D> puntos) {
         // Dibujar ejes
-        background.drawLine(new Punto2D(0, -getHeight()/2), new Punto2D(0, getHeight()/2));
-        background.drawLine(new Punto2D(-getWidth()/2, 0), new Punto2D(getWidth()/2, 0));
-        getGraphics().drawImage(background.getImage(), 0, 0, this);
+        background2D.drawLine(new Punto2D(0, -getHeight()/2), new Punto2D(0, getHeight()/2));
+        background2D.drawLine(new Punto2D(-getWidth()/2, 0), new Punto2D(getWidth()/2, 0));
+        getGraphics().drawImage(background2D.getImage(), 0, 0, this);
 
         // Dibujar curva
         dibujante3D.drawCurve(puntos);
@@ -200,10 +206,10 @@ public class MainWindow extends JFrame {
         ejeY.addPuntos(new Punto3D[]{ new Punto3D(0, 0, 0), new Punto3D(0, 500, 0) });
         ejeZ.addPuntos(new Punto3D[]{ new Punto3D(0, 0, 0), new Punto3D(0, 0, 500) });
 
-        background.drawCurve(proy.proyectar(ejeX.transform(tz).transform(tx)));
-        background.drawCurve(proy.proyectar(ejeY.transform(tz).transform(tx)));
-        background.drawCurve(proy.proyectar(ejeZ.transform(tz).transform(tx)));
-        getGraphics().drawImage(background.getImage(), 0, 0, this);
+        background2D.drawCurve(proy.proyectar(ejeX.transform(tz).transform(tx)));
+        background2D.drawCurve(proy.proyectar(ejeY.transform(tz).transform(tx)));
+        background2D.drawCurve(proy.proyectar(ejeZ.transform(tz).transform(tx)));
+        getGraphics().drawImage(background2D.getImage(), 0, 0, this);
 
         // Dibujar curva
 
