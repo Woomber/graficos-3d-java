@@ -18,8 +18,22 @@ public class Figura {
     }
 
     public Figura(Figura f) {
+        this();
+        for(Punto3D vertice : f.getVertices()) {
+            vertices.add(new Punto3D(vertice));
+        }
+
         for(Arista3D arista: f.getAristas()) {
-            this.addArista(new Punto3D(arista.getA()), new Punto3D(arista.getB()));
+            Punto3D a = null, b = null;
+            for(Punto3D p : vertices) {
+                if (p.equals(arista.getA())) {
+                    a = p;
+                }
+                if(p.equals(arista.getB())) {
+                    b = p;
+                }
+            }
+            this.addArista(a, b);
         }
     }
 
@@ -62,11 +76,11 @@ public class Figura {
         aristas.add(new Arista3D(a, b));
     }
 
-    public List<Arista3D> connectedTo(Punto3D a) {
-        List<Arista3D> connected = new ArrayList<>();
+    public List<Punto3D> connectedTo(Punto3D a) {
+        List<Punto3D> connected = new ArrayList<>();
         for(Arista3D arista: aristas) {
-            if(arista.getA().equals(a) || arista.getB().equals(a)) {
-                connected.add(arista);
+            if(arista.getA().equals(a)) {
+                connected.add(arista.getB());
             }
         }
         return connected;

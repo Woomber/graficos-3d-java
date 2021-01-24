@@ -19,6 +19,13 @@ public class Curva3D {
         this.puntos = puntos;
     }
 
+    public Curva3D(Curva3D copia) {
+        this();
+        for (Punto3D punto : copia.getPuntos()) {
+            this.addPunto(new Punto3D(punto));
+        }
+    }
+
     public void addPunto(Punto3D p) {
         puntos.add(p);
     }

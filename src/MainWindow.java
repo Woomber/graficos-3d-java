@@ -1,18 +1,11 @@
+import animation.*;
 import dibujante.Dibujante3D;
-import figuras.Curva3D;
-import figuras.Figura;
-import figuras.FiguraCubo;
-import figuras.FiguraTetris;
-import functions.Functions;
+import figuras.*;
+import functions.*;
 import matrices.*;
-import matrices.plano.Punto2D;
-import matrices.plano.Punto3D;
-import meshes.Mesh2D;
-import meshes.MeshRectangular;
-import projections.ParallelOrthogonalProjection;
-import projections.ParallelProjection;
-import projections.PerspectiveProjection;
-import projections.Proyectador;
+import matrices.plano.*;
+import meshes.*;
+import projections.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,6 +40,8 @@ public class MainWindow extends JFrame {
             background2D.clear();
             background2D.setOrigin(new Punto2D(getWidth()/2, getHeight()/2));
             background2D.setColor(new Color(200, 200, 200));
+            background2D.drawLine(new Punto2D(0, -getHeight()/2), new Punto2D(0, getHeight()/2));
+            background2D.drawLine(new Punto2D(-getWidth()/2, 0), new Punto2D(getWidth()/2, 0));
 
             background3D = new Dibujante3D(new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB), this);
             background3D.setColor(Color.WHITE);
@@ -55,14 +50,37 @@ public class MainWindow extends JFrame {
             background3D.setColor(new Color(200, 200, 200));
 
             // Dibujar una de las proyecciones (0 al 3)
-            // dibujarProyecciones(3);
+           // dibujarProyecciones(3);
 
             // Dibujar una de las curvas (0 al 7)
             // dibujarCurvas(6);
 
             // Dibujar la malla
-            dibujarMalla();
+            // dibujarMalla();
+            animationTest();
         }
+    }
+
+    protected void animationTest() {
+        Animation animation = new Animation(getWidth(), getHeight(), this);
+        animation.setFrameAsBackground(background2D.getImage());
+        animation.setOrigin(new Punto2D(getWidth()/2.0, getHeight()/2.0));
+        animation.setFrameDelay(20);
+
+        AnimationElement element = new AnimationElement(new FiguraCubo().transform(new MatrizEscalado(1.5)), new PerspectiveProjection(100));
+
+        int vueltas = 5;
+        for(int i = 0; i < 72 * vueltas; i++) {
+            element.addAction(new MatrizRotacion(Eje.Y, 5, true));
+        }
+        for(int i = 0; i < 72 * vueltas; i++) {
+            element.addAction(new MatrizRotacion(Eje.X, 5, true));
+        }
+
+        animation.addElement(element);
+        AnimationQueue.add(animation);
+
+        AnimationQueue.playOnRepeat(getGraphics());
     }
 
     protected void dibujarMalla() {
@@ -183,8 +201,6 @@ public class MainWindow extends JFrame {
 
     protected void dibujarCurva(List<Punto2D> puntos) {
         // Dibujar ejes
-        background2D.drawLine(new Punto2D(0, -getHeight()/2), new Punto2D(0, getHeight()/2));
-        background2D.drawLine(new Punto2D(-getWidth()/2, 0), new Punto2D(getWidth()/2, 0));
         getGraphics().drawImage(background2D.getImage(), 0, 0, this);
 
         // Dibujar curva
@@ -206,10 +222,10 @@ public class MainWindow extends JFrame {
         ejeY.addPuntos(new Punto3D[]{ new Punto3D(0, 0, 0), new Punto3D(0, 500, 0) });
         ejeZ.addPuntos(new Punto3D[]{ new Punto3D(0, 0, 0), new Punto3D(0, 0, 500) });
 
-        background2D.drawCurve(proy.proyectar(ejeX.transform(tz).transform(tx)));
-        background2D.drawCurve(proy.proyectar(ejeY.transform(tz).transform(tx)));
-        background2D.drawCurve(proy.proyectar(ejeZ.transform(tz).transform(tx)));
-        getGraphics().drawImage(background2D.getImage(), 0, 0, this);
+        background3D.drawCurve(proy.proyectar(ejeX.transform(tz).transform(tx)));
+        background3D.drawCurve(proy.proyectar(ejeY.transform(tz).transform(tx)));
+        background3D.drawCurve(proy.proyectar(ejeZ.transform(tz).transform(tx)));
+        getGraphics().drawImage(background3D.getImage(), 0, 0, this);
 
         // Dibujar curva
 
@@ -244,7 +260,7 @@ public class MainWindow extends JFrame {
             // Proyección Perspectiva
             case 3:
                 System.out.println(out + "perspectiva");
-                proyectar(new FiguraCubo(), new PerspectiveProjection(2));
+                proyectar(new FiguraCubo(), new PerspectiveProjection(100));
                 break;
 
             default:
@@ -260,7 +276,7 @@ public class MainWindow extends JFrame {
                         .transform(new MatrizEscalado(1.1))
                         .transform(new MatrizRotacion(Eje.Y, 30, true))
                         .transform(new MatrizRotacion(Eje.X, -30, true))
-                        .transform(new MatrizTraslacion(40, 40, 100))
+                        .transform(new MatrizTraslacion(40, 40, 0))
         ));
 
         getGraphics().drawImage(dibujante3D.getImage(), 0, 0, this);

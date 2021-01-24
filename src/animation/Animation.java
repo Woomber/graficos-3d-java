@@ -19,6 +19,7 @@ public class Animation extends Thread {
 
     protected Dibujante3D foreground, background;
     protected BufferedImage frame;
+    protected Punto2D origin;
 
     protected final List<AnimationElement> elements;
 
@@ -32,6 +33,8 @@ public class Animation extends Thread {
         this.observer = observer;
         this.frameListeners = new ArrayList<>();
         this.elements = new ArrayList<>();
+        this.currentFrame = new AtomicInteger(0);
+        this.origin = new Punto2D(0, 0);
 
         background = new Dibujante3D(new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB), observer);
         foreground = new Dibujante3D(new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB), observer);
@@ -42,7 +45,19 @@ public class Animation extends Thread {
         background.clear();
     }
 
+    public Animation(Animation copia) {
+         this(copia.frame.getWidth(), copia.frame.getHeight(), copia.observer);
+         frameDelay = copia.frameDelay;
+         initialDelay = copia.initialDelay;
+         setOrigin(copia.origin);
+
+         background = copia.background;
+
+         elements.addAll(copia.elements);
+    }
+
     public void setOrigin(Punto2D origin) {
+        this.origin = origin;
         background.setOrigin(origin);
         foreground.setOrigin(origin);
     }
@@ -80,7 +95,13 @@ public class Animation extends Thread {
                 foreground.drawAristas(element.getProyectador().proyectar(projected));
             }
 
+            drawFrame();
+            sendFrame();
+            postFrameOperations();
+
             for(; currentFrame.get() < maxFrame; currentFrame.getAndIncrement()) {
+
+                foreground.resetBuffer();
 
                 // Dibujar polígonos
                 for(AnimationElement element : elements) {
@@ -112,7 +133,7 @@ public class Animation extends Thread {
 
     protected void sendFrame() {
         for(AnimationFrameListener l : frameListeners) {
-            l.drawFrame(frame, currentFrame.get());
+            l.drawFrame(frame, this, currentFrame.get());
         }
     }
 
