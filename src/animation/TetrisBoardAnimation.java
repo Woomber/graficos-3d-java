@@ -33,7 +33,8 @@ public class TetrisBoardAnimation extends Animation {
     public TetrisBoardAnimation(int width, int height, ImageObserver observer) {
         super(width, height, observer);
 
-        proyectador = new ParallelProjection(0.5 * Math.cos(Math.atan(-1.5)),  0.75 * Math.sin(Math.atan(-1.5)));
+        proyectador = new ParallelProjection(-0.5 * Math.cos(Math.atan(-1.5)),  0.75 * Math.sin(Math.atan(-1.5)));
+        //proyectador = new PerspectiveProjection(280, 0.35);
         if(DEBUG_FLAT) proyectador = new ParallelOrthogonalProjection();
 
         colors = new Color[] {
@@ -47,7 +48,7 @@ public class TetrisBoardAnimation extends Animation {
         };
 
 
-        this.setFrameDelay(200);
+        this.setFrameDelay(120);
 
         AnimationElement containerElement = new AnimationElement(new TetrisContainer(), proyectador);
         addElement(containerElement);
@@ -63,6 +64,15 @@ public class TetrisBoardAnimation extends Animation {
         addTetracube(new TetracubeL(), 180, 5, 0, 2);
         addTetracube(new TetracubeT(), 90, 0, 3, 1);
         addTetracube(new TetracubeZ(), -90, 4, 1, 6);
+        addTetracube(new TetracubeJ(), 180, 2, 0, 5);
+        addTetracube(new TetracubeT(), 180, 9, 0, 2);
+        addTetracube(new TetracubeZ(), 0, 6, 3, 3);
+        addTetracube(new TetracubeL(), 0, 0, 3, 8);
+        addTetracube(new TetracubeS(), 0, 3, 3, 5);
+        addTetracube(new TetracubeT(), -90, 8, 1, 6);
+        addTetracube(new TetracubeJ(), -90, 7, 1, 8);
+        addTetracube(new TetracubeZ(), 0, 2, 3, 7);
+        addTetracube(new TetracubeO(), 0, 1, 2, 9);
 
         addGeneralAction(new MatrizEscalado(0.5));
     }
@@ -84,8 +94,8 @@ public class TetrisBoardAnimation extends Animation {
 
     @Override
     protected int getDelay() {
-        double delayFactor = 1 + 0.5 * (getCurrentFrame() / 50.0);
+        double delayFactor = 1 + 0.5 * (getCurrentFrame() / 100.0);
         System.out.println(delayFactor);
-        return super.getDelay() / (int) delayFactor;
+        return (int) (super.getDelay() / delayFactor);
     }
 }

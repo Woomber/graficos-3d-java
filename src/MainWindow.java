@@ -29,7 +29,7 @@ public class MainWindow extends JFrame {
 
         this.origin = new Punto2D(getWidth()/2.0, getHeight()/2.0);
 
-        //AudioPlayer.initAndPlay();
+        AudioPlayer.initAndPlay();
 
         addWindowListener(new WindowAdapter() {
             @Override

@@ -40,4 +40,9 @@ public class TetracubeZ extends Tetracube {
         });
         duplicateAndConnect();
     }
+
+    @Override
+    public void setupMesh() {
+
+    }
 }

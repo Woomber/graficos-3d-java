@@ -34,4 +34,9 @@ public class TetracubeO extends Tetracube {
 
         duplicateAndConnect();
     }
+
+    @Override
+    public void setupMesh() {
+
+    }
 }

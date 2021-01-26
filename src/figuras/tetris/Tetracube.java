@@ -7,6 +7,7 @@ import matrices.plano.Punto3D;
 public abstract class Tetracube extends Figura {
 
     protected final double scale;
+    protected final double meshSize = 0.1;
 
     public Tetracube() {
         this.scale = 50;
@@ -16,12 +17,14 @@ public abstract class Tetracube extends Figura {
         this.scale = scale;
     }
 
-    protected void addScaledPoint(double x, double y, double z) {
-        vertices.add(new Punto3D(x * scale, y * scale, z * scale));
+    protected Punto3D addScaledPoint(double x, double y, double z) {
+        Punto3D p = new Punto3D(x * scale, y * scale, z * scale);
+        vertices.add(p);
+        return p;
     }
 
-    protected void addScaledPoint(Punto3D p) {
-        addScaledPoint(p.getX(), p.getY(), p.getZ());
+    protected Punto3D addScaledPoint(Punto3D p) {
+        return addScaledPoint(p.getX(), p.getY(), p.getZ());
     }
 
     protected void addScaledPoints(Punto3D[] points) {
@@ -65,5 +68,7 @@ public abstract class Tetracube extends Figura {
     }
 
     public abstract void setupShape();
+
+    public abstract void setupMesh();
 
 }
