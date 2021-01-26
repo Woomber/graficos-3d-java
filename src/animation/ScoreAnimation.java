@@ -2,14 +2,10 @@ package animation;
 
 import factories.NumberCurveFactory;
 import figuras.Curva3D;
-import figuras.Figura;
-import matrices.MatrizEscalado;
-import matrices.MatrizTransformacion;
-import projections.ParallelOrthogonalProjection;
-import projections.Proyectador;
+import matrices.*;
+import projections.*;
 
 import java.awt.image.ImageObserver;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ScoreAnimation extends Animation {
@@ -25,7 +21,7 @@ public class ScoreAnimation extends Animation {
 
         if(increment == 0) throw new IllegalArgumentException("increment no puede ser 0");
         if(from > to && increment > 0) throw new IllegalArgumentException("from debe ser menor que to");
-        if(from < to && increment < 0) throw new IllegalArgumentException("from debe ser mayot que to");
+        if(from < to && increment < 0) throw new IllegalArgumentException("from debe ser mayor que to");
 
         setMaxFrames(Math.abs(from - to)/increment + 1);
         number = from;
@@ -42,5 +38,10 @@ public class ScoreAnimation extends Animation {
             foreground.drawCurve(proyectador.proyectar(c));
         }
         number += increment;
+    }
+
+    @Override
+    protected int getDelay() {
+        return (int) Math.floor(Math.random() * (1000 - 50 + 1)) + 50;
     }
 }

@@ -97,6 +97,10 @@ public class Animation extends Thread {
         }
     }
 
+    protected int getDelay() {
+        return frameDelay;
+    }
+
     @Override
     public void run() {
         try {
@@ -113,7 +117,7 @@ public class Animation extends Thread {
 
                 foreground.resetBuffer();
                 // Dibujar frames
-                sleep(frameDelay);
+                sleep(getDelay());
                 processFrame();
 
             }
