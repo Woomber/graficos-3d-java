@@ -2,11 +2,14 @@ package factories;
 
 import figuras.Curva3D;
 import functions.Functions;
+import matrices.MatrizTraslacion;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class NumberCurveFactory extends Curva3D {
+
+    public static final double OFFSET_INCREMENT = 2.5;
 
     public static List<Curva3D> buildDigit(int digit) throws ArrayIndexOutOfBoundsException {
         List<Curva3D> curvas = new ArrayList<>();
@@ -134,6 +137,26 @@ public class NumberCurveFactory extends Curva3D {
             default:
                 throw new ArrayIndexOutOfBoundsException("Dígito debe ser entre 0 y 9");
         }
+        return curvas;
+    }
+
+    public static List<Curva3D> buildNumber(int number, int padding) {
+        List<Curva3D> curvas = new ArrayList<>();
+
+        if(padding == 0) padding = 1;
+
+        String numberFormat = String.format("%0" + padding + "d", number);
+        double offset = 0;
+
+        for(char digit : numberFormat.toCharArray()) {
+            List<Curva3D> numberCurves = buildDigit(digit - '0');
+            for (Curva3D curve : numberCurves) {
+                curve.transform(new MatrizTraslacion(offset, 0, 0));
+            }
+            offset += OFFSET_INCREMENT;
+            curvas.addAll(numberCurves);
+        }
+
         return curvas;
     }
 }

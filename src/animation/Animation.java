@@ -2,6 +2,7 @@ package animation;
 
 import dibujante.Dibujante3D;
 import figuras.Figura;
+import matrices.MatrizTransformacion;
 import matrices.plano.Punto2D;
 import projections.Proyectador;
 
@@ -22,17 +23,20 @@ public class Animation extends Thread {
     protected Punto2D origin;
 
     protected final List<AnimationElement> elements;
+    protected List<MatrizTransformacion> generalActions;
 
     protected AtomicInteger currentFrame;
 
     protected int frameDelay = 100;
     protected int initialDelay = 0;
+    protected int maxFrames = -1;
 
 
     public Animation(int width, int height, ImageObserver observer) {
         this.observer = observer;
         this.frameListeners = new ArrayList<>();
         this.elements = new ArrayList<>();
+        generalActions = new ArrayList<>();
         this.currentFrame = new AtomicInteger(0);
         this.origin = new Punto2D(0, 0);
 
@@ -76,47 +80,41 @@ public class Animation extends Thread {
         elements.add(element);
     }
 
+    public void addGeneralAction(MatrizTransformacion m) {
+        generalActions.add(m);
+    }
+
+    public void setMaxFrames(int maxFrames) {
+        this.maxFrames = maxFrames;
+    }
+
+    protected void setMaxFramesByElements() {
+        maxFrames = 0;
+        for(AnimationElement e : elements) {
+            if(e.getNumberOfActions() > maxFrames) {
+                maxFrames = e.getNumberOfActions();
+            }
+        }
+    }
+
     @Override
     public void run() {
         try {
             currentFrame.set(0);
 
-            int maxFrame = 0;
-            for(AnimationElement e : elements) {
-                if(e.getNumberOfActions() > maxFrame) {
-                    maxFrame = e.getNumberOfActions();
-                }
+            if(maxFrames == -1) {
+                setMaxFramesByElements();
             }
 
             sleep(initialDelay);
+            processFrame();
 
-            for(AnimationElement element : elements) {
-                Figura projected = new Figura(element.getFigura());
-                foreground.drawAristas(element.getProyectador().proyectar(projected));
-            }
-
-            drawFrame();
-            sendFrame();
-            postFrameOperations();
-
-            for(; currentFrame.get() < maxFrame; currentFrame.getAndIncrement()) {
+            for(; currentFrame.get() < maxFrames;) {
 
                 foreground.resetBuffer();
-
-                // Dibujar polígonos
-                for(AnimationElement element : elements) {
-                    if(element.getNumberOfActions() > currentFrame.get()) {
-                        element.getFigura().transform(element.getAction(currentFrame.get()));
-                    }
-                    Figura projected = new Figura(element.getFigura());
-                    foreground.drawAristas(element.getProyectador().proyectar(projected));
-                }
-
                 // Dibujar frames
                 sleep(frameDelay);
-                drawFrame();
-                sendFrame();
-                postFrameOperations();
+                processFrame();
 
             }
         } catch (InterruptedException ignored) {
@@ -125,6 +123,27 @@ public class Animation extends Thread {
             finish();
         }
     }
+
+    protected void processFrame() {
+        frameOperations();
+        drawFrame();
+        sendFrame();
+        postFrameOperations();
+    }
+
+    protected void frameOperations() {
+        for(AnimationElement element : elements) {
+            if(element.getNumberOfActions() > currentFrame.get()) {
+                element.getFigura().transform(element.getAction(currentFrame.get()));
+            }
+            Figura projected = new Figura(element.getFigura());
+            for(MatrizTransformacion t : generalActions) {
+                projected.transform(t);
+            }
+            foreground.drawAristas(element.getProyectador().proyectar(projected));
+        }
+    }
+
 
     protected void drawFrame() {
         frame.getGraphics().drawImage(background.getImage(), 0, 0, observer);
@@ -137,7 +156,9 @@ public class Animation extends Thread {
         }
     }
 
-    protected void postFrameOperations() {}
+    protected void postFrameOperations() {
+        currentFrame.getAndIncrement();
+    }
 
     protected void finish() {
         for(AnimationFrameListener l : frameListeners) {

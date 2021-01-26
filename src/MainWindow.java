@@ -1,32 +1,42 @@
 import animation.*;
+import audio.AudioPlayer;
 import dibujante.Dibujante3D;
-import factories.NumberCurveFactory;
-import figuras.*;
-import functions.*;
 import matrices.*;
 import matrices.plano.*;
-import meshes.*;
-import projections.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.util.List;
+
 
 public class MainWindow extends JFrame {
 
-    protected static final double PROJECTION_ANGLE = Math.atan(-2);
-
     protected Dibujante3D dibujante3D;
-    protected Dibujante3D background2D, background3D;
+    protected Dibujante3D background;
     protected boolean drawn = false;
+
+    protected final Punto2D origin;
 
     public MainWindow() {
         this.setSize(800, 600);
-        this.setTitle("Proyecciones");
+        this.setTitle("Proyecto Final - Yael Chavoya");
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
+
+        this.origin = new Punto2D(getWidth()/2.0, getHeight()/2.0);
+
+        AudioPlayer.initAndPlay();
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                AudioPlayer.stopInstance();
+            }
+        });
     }
 
     @Override
@@ -34,39 +44,32 @@ public class MainWindow extends JFrame {
         if(!drawn) {
             drawn = true;
             dibujante3D = new Dibujante3D(new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB), this);
-            dibujante3D.setOrigin(new Punto2D(getWidth()/2, getHeight()/2));
+            dibujante3D.setOrigin(origin);
 
-            background2D = new Dibujante3D(new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB), this);
-            background2D.setColor(Color.WHITE);
-            background2D.clear();
-            background2D.setOrigin(new Punto2D(getWidth()/2, getHeight()/2));
-            background2D.setColor(new Color(200, 200, 200));
-            background2D.drawLine(new Punto2D(0, -getHeight()/2), new Punto2D(0, getHeight()/2));
-            background2D.drawLine(new Punto2D(-getWidth()/2, 0), new Punto2D(getWidth()/2, 0));
-            getGraphics().drawImage(background2D.getImage(), 0, 0, this);
-
-
-            dibujarCurva3D();
+            setupBackground();
+            setupAnimation();
         }
     }
 
-    protected void dibujarCurva3D() {
-        Proyectador proy = new ParallelOrthogonalProjection();
+    protected void setupBackground() {
+        background = new Dibujante3D(new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB), this);
+        background.setColor(Color.WHITE);
+        background.clear();
+        background.setOrigin(origin);
+        background.setColor(new Color(200, 200, 200));
+        background.drawLine(new Punto2D(0, origin.getY()), new Punto2D(0, origin.getY()));
+        background.drawLine(new Punto2D(origin.getX(), 0), new Punto2D(origin.getX(), 0));
+    }
 
+    protected void setupAnimation() {
+        ScoreAnimation animation = new ScoreAnimation(getWidth(), getHeight(), this, 0, 117500, 100);
+        animation.setOrigin(origin);
+        animation.addGeneralAction(new MatrizEscalado(7.5));
+        animation.addGeneralAction(new MatrizTraslacion(250, -250, 0));
+        animation.setFrameDelay(100);
 
-        final double scale = 7.5;
-        for(int i = 0; i < 10; i++) {
-            // Dibujar curva
-            List<Curva3D> curvas = NumberCurveFactory.buildDigit(i);
-            for (Curva3D c: curvas) {
-                dibujante3D.drawCurve(proy.proyectar(c
-                        .transform(new MatrizEscalado(scale))
-                        .transform(new MatrizTraslacion(380 - 2.5 * scale * i, -220 - scale*3, 0))
-                ));
-            }
-        }
-
-        getGraphics().drawImage(dibujante3D.getImage(), 0, 0, this);
+        AnimationQueue.add(animation);
+        AnimationQueue.play(getGraphics());
     }
 
     public static void main(String[] args) {
