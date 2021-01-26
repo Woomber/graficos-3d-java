@@ -40,11 +40,14 @@ public class TetrisBoardAnimation extends Animation {
                 new Color(255, 0, 0),
                 new Color(0, 120, 0),
                 new Color(0, 0, 200),
-                new Color(190, 120, 0)
+                new Color(200, 140, 0),
+                new Color(200, 0, 200),
+                new Color(240, 100, 0),
+                new Color(0, 160, 250),
         };
 
 
-        this.setFrameDelay(50);
+        this.setFrameDelay(200);
 
         AnimationElement containerElement = new AnimationElement(new TetrisContainer(), proyectador);
         addElement(containerElement);
@@ -55,6 +58,11 @@ public class TetrisBoardAnimation extends Animation {
         addTetracube(new TetracubeO(), 0, 4, 1, 1);
         addTetracube(new TetracubeS(), 0, 7, 3, 0);
         addTetracube(new TetracubeS(), -90, 4, 3, 1);
+        addTetracube(new TetracubeJ(), 180, 2, 0, 1);
+        addTetracube(new TetracubeI(), 0, 5, 3, 3);
+        addTetracube(new TetracubeL(), 180, 5, 0, 2);
+        addTetracube(new TetracubeT(), 90, 0, 3, 1);
+        addTetracube(new TetracubeZ(), -90, 4, 1, 6);
 
         addGeneralAction(new MatrizEscalado(0.5));
     }
@@ -72,5 +80,12 @@ public class TetrisBoardAnimation extends Animation {
         }
         element.getFigura().setLineColor(getColor(colorCount++));
         addElement(element);
+    }
+
+    @Override
+    protected int getDelay() {
+        double delayFactor = 1 + 0.5 * (getCurrentFrame() / 50.0);
+        System.out.println(delayFactor);
+        return super.getDelay() / (int) delayFactor;
     }
 }
