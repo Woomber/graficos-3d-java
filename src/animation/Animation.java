@@ -20,7 +20,7 @@ public class Animation extends Thread {
 
     protected Dibujante3D foreground, background;
     protected BufferedImage frame;
-    protected Punto2D origin;
+    protected Punto2D origin, screenPosition;
 
     protected final List<AnimationElement> elements;
     protected List<MatrizTransformacion> generalActions;
@@ -39,6 +39,7 @@ public class Animation extends Thread {
         generalActions = new ArrayList<>();
         this.currentFrame = new AtomicInteger(0);
         this.origin = new Punto2D(0, 0);
+        this.screenPosition = new Punto2D(0, 0);
 
         background = new Dibujante3D(new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB), observer);
         foreground = new Dibujante3D(new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB), observer);
@@ -53,17 +54,29 @@ public class Animation extends Thread {
          this(copia.frame.getWidth(), copia.frame.getHeight(), copia.observer);
          frameDelay = copia.frameDelay;
          initialDelay = copia.initialDelay;
-         setOrigin(copia.origin);
+         setDrawOrigin(copia.origin);
 
          background = copia.background;
 
          elements.addAll(copia.elements);
     }
 
-    public void setOrigin(Punto2D origin) {
+    public void setDrawOrigin(Punto2D origin) {
         this.origin = origin;
         background.setOrigin(origin);
         foreground.setOrigin(origin);
+    }
+
+    public void setDrawOriginCenter() {
+        setDrawOrigin(new Punto2D(getWidth()/2.0, getHeight()/2.0));
+    }
+
+    public Punto2D getScreenPosition() {
+        return screenPosition;
+    }
+
+    public void setScreenPosition(Punto2D pos) {
+        this.screenPosition = pos;
     }
 
     public void setProyectador(Proyectador proyectador) {
@@ -144,6 +157,7 @@ public class Animation extends Thread {
             for(MatrizTransformacion t : generalActions) {
                 projected.transform(t);
             }
+            foreground.setColor(element.getFigura().getLineColor());
             foreground.drawAristas(element.getProyectador().proyectar(projected));
         }
     }
@@ -196,5 +210,13 @@ public class Animation extends Thread {
 
     public void setInitialDelay(int initialDelay) {
         this.initialDelay = initialDelay;
+    }
+
+    public int getWidth() {
+        return frame.getWidth();
+    }
+
+    public int getHeight() {
+        return frame.getHeight();
     }
 }

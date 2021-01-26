@@ -4,6 +4,7 @@ import matrices.plano.Arista3D;
 import matrices.MatrizTransformacion;
 import matrices.plano.Punto3D;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ public class Figura {
 
     protected List<Punto3D> vertices;
     protected List<Arista3D> aristas;
+    protected Color lineColor = Color.BLACK;
 
     public Figura() {
         vertices = new ArrayList<>();
@@ -51,6 +53,14 @@ public class Figura {
 
     public Arista3D getArista(int index) {
         return aristas.get(index);
+    }
+
+    public Color getLineColor() {
+        return lineColor;
+    }
+
+    public void setLineColor(Color lineColor) {
+        this.lineColor = lineColor;
     }
 
     public void addVertice(Punto3D p) {

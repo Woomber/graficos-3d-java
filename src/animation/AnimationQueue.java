@@ -17,7 +17,7 @@ public class AnimationQueue {
         @Override
         public void drawFrame(BufferedImage frame, Animation sender, int frameNumber) {
             if(graphics != null) {
-                graphics.drawImage(frame, 0, 0, sender.observer);
+                graphics.drawImage(frame, sender.getScreenPosition().getIntX(), sender.getScreenPosition().getIntY(), sender.observer);
             }
         }
 
@@ -38,6 +38,15 @@ public class AnimationQueue {
 
     public static void playOnRepeat(Graphics g) {
         start(g, true);
+    }
+
+    public static void playParallel(Graphics g) {
+        graphics = g;
+        while(!queue.isEmpty()) {
+            Animation a = queue.remove();
+            a.addListener(listener);
+            a.start();
+        }
     }
 
     protected static void start(Graphics g, boolean onRepeat) {

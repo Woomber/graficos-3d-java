@@ -1,8 +1,13 @@
 import animation.*;
 import audio.AudioPlayer;
 import dibujante.Dibujante3D;
+import factories.NumberCurveFactory;
+import figuras.Figura;
+import figuras.TetrisContainer;
 import matrices.*;
 import matrices.plano.*;
+import projections.ParallelProjection;
+import projections.Proyectador;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +25,7 @@ public class MainWindow extends JFrame {
     protected final Punto2D origin;
 
     public MainWindow() {
-        this.setSize(800, 600);
+        this.setSize(600, 800);
         this.setTitle("Proyecto Final - Yael Chavoya");
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -28,7 +33,7 @@ public class MainWindow extends JFrame {
 
         this.origin = new Punto2D(getWidth()/2.0, getHeight()/2.0);
 
-        AudioPlayer.initAndPlay();
+        //AudioPlayer.initAndPlay();
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -43,8 +48,6 @@ public class MainWindow extends JFrame {
     public void paint(Graphics g) {
         if(!drawn) {
             drawn = true;
-            dibujante3D = new Dibujante3D(new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB), this);
-            dibujante3D.setOrigin(origin);
 
             setupBackground();
             setupAnimation();
@@ -56,20 +59,26 @@ public class MainWindow extends JFrame {
         background.setColor(Color.WHITE);
         background.clear();
         background.setOrigin(origin);
-        background.setColor(new Color(200, 200, 200));
-        background.drawLine(new Punto2D(0, origin.getY()), new Punto2D(0, origin.getY()));
-        background.drawLine(new Punto2D(origin.getX(), 0), new Punto2D(origin.getX(), 0));
+        getGraphics().drawImage(background.getImage(), 0, 0, this);
     }
 
     protected void setupAnimation() {
-        ScoreAnimation animation = new ScoreAnimation(getWidth(), getHeight(), this, 0, 117500, 100);
-        animation.setOrigin(origin);
-        animation.addGeneralAction(new MatrizEscalado(7.5));
-        animation.addGeneralAction(new MatrizTraslacion(250, -250, 0));
-        animation.setFrameDelay(100);
+        double scoreScale = 7.5;
+        int scoreWidth = (int) Math.ceil(NumberCurveFactory.OFFSET_INCREMENT * scoreScale * 8.5);
+        int scoreHeight = 50;
 
-        AnimationQueue.add(animation);
-        AnimationQueue.play(getGraphics());
+        Animation scoreAnimation = new ScoreAnimation(scoreWidth, scoreHeight, this, 0, 117500, 100);
+        scoreAnimation.setDrawOrigin(new Punto2D(scoreScale, scoreHeight/2.0));
+        scoreAnimation.setScreenPosition(new Punto2D(getWidth() - scoreWidth, 70));
+        scoreAnimation.addGeneralAction(new MatrizEscalado(scoreScale));
+        AnimationQueue.add(scoreAnimation);
+
+        Animation boardAnimation = new TetrisBoardAnimation(getWidth() - scoreWidth, getHeight(), this);
+        boardAnimation.setDrawOriginCenter();
+        boardAnimation.setInitialDelay(1000);
+        AnimationQueue.add(boardAnimation);
+
+        AnimationQueue.playParallel(getGraphics());
     }
 
     public static void main(String[] args) {

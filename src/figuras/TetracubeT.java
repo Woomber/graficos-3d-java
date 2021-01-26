@@ -16,13 +16,13 @@ import matrices.plano.Punto3D;
 
  */
 
-public class FiguraTetris extends Figura {
+public class TetracubeT extends Figura {
 
-    public FiguraTetris() {
+    public TetracubeT() {
         this(50);
     }
 
-    public FiguraTetris(int size) {
+    public TetracubeT(int size) {
         addVertices(new Punto3D[]{
                 // 0 1 2 3
                 new Punto3D(0, 0, size),
