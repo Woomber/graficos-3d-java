@@ -1,5 +1,6 @@
-package figuras;
+package figuras.tetris;
 
+import figuras.Figura;
 import matrices.plano.Punto3D;
 
 public class TetrisContainer extends Figura {

@@ -2,12 +2,8 @@ import animation.*;
 import audio.AudioPlayer;
 import dibujante.Dibujante3D;
 import factories.NumberCurveFactory;
-import figuras.Figura;
-import figuras.TetrisContainer;
 import matrices.*;
 import matrices.plano.*;
-import projections.ParallelProjection;
-import projections.Proyectador;
 
 import javax.swing.*;
 import java.awt.*;
@@ -55,7 +51,7 @@ public class MainWindow extends JFrame {
     }
 
     protected void setupBackground() {
-        background = new Dibujante3D(new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB), this);
+        background = new Dibujante3D(new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB), this);
         background.setColor(Color.WHITE);
         background.clear();
         background.setOrigin(origin);
@@ -71,6 +67,7 @@ public class MainWindow extends JFrame {
         scoreAnimation.setDrawOrigin(new Punto2D(scoreScale, scoreHeight/2.0));
         scoreAnimation.setScreenPosition(new Punto2D(getWidth() - scoreWidth, 70));
         scoreAnimation.addGeneralAction(new MatrizEscalado(scoreScale));
+        scoreAnimation.setInitialDelay(1000);
         AnimationQueue.add(scoreAnimation);
 
         Animation boardAnimation = new TetrisBoardAnimation(getWidth() - scoreWidth, getHeight(), this);

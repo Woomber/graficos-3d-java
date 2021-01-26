@@ -23,6 +23,7 @@ public class ScoreAnimation extends Animation {
         if(from > to && increment > 0) throw new IllegalArgumentException("from debe ser menor que to");
         if(from < to && increment < 0) throw new IllegalArgumentException("from debe ser mayor que to");
 
+        setFrameDelay(250);
         setMaxFrames(Math.abs(from - to)/increment + 1);
         number = from;
         this.increment = increment;
@@ -38,10 +39,5 @@ public class ScoreAnimation extends Animation {
             foreground.drawCurve(proyectador.proyectar(c));
         }
         number += increment;
-    }
-
-    @Override
-    protected int getDelay() {
-        return (int) Math.floor(Math.random() * (1000 - 50 + 1)) + 50;
     }
 }
