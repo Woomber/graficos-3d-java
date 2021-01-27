@@ -10,7 +10,7 @@ import java.util.List;
 public class LetterCurveFactory {
 
     public static final double OFFSET_INCREMENT = 2.5;
-    public static final double T_FACTOR = 0.1;
+    public static final double T_FACTOR = 0.3;
 
     public static List<Curva3D> buildLetter(char letter) {
         List<Curva3D> curvas = new ArrayList<>();
