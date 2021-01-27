@@ -46,7 +46,7 @@ public class TetrisBoardAnimation extends Animation {
         };
 
 
-        this.setFrameDelay(100);
+        this.setFrameDelay(10);
 
         AnimationElement containerElement = new AnimationElement(new TetrisContainer(), proyectadorA);
         addElement(containerElement);
@@ -77,6 +77,20 @@ public class TetrisBoardAnimation extends Animation {
         addTetracube(new TetracubeS(), 0, 3,3, 9);
         addTetracube(new TetracubeL(), 90, 7, 0, 9);
         addTetracube(new TetracubeT(), 0, 6, 3, 9);
+        addTetracube(new TetracubeT(), 180, 6, 0, 10);
+        addTetracube(new TetracubeZ(), -90, 9, 2, 11);
+        addTetracube(new TetracubeL(), 90, 2, 0, 12);
+        addTetracube(new TetracubeO(), 0, 5, 2, 13);
+        addTetracube(new TetracubeS(), 0, 7, 3, 12);
+        addTetracube(new TetracubeJ(), 0, 2, 3, 13);
+        addTetracube(new TetracubeZ(), 0, 4, 3, 14);
+        addTetracube(new TetracubeO(), 0, 8, 2, 14);
+        addTetracube(new TetracubeI(), 0, 1, 4, 12);
+        addTetracube(new TetracubeL(), 0, 6, 3, 15);
+        addTetracube(new TetracubeJ(), -90, 10, 2, 16);
+        addTetracube(new TetracubeS(), -90, 6, 2, 16);
+        addTetracube(new TetracubeT(), 0, 2,  2,17);
+        addTetracube(new TetracubeO(), 0, 3, 2, 18);
 
         addGeneralAction(new MatrizEscalado(0.5));
     }

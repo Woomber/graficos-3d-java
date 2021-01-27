@@ -51,7 +51,7 @@ public class TetrisShapeAnimation extends Animation {
 
     protected void randomizeIncrements() {
         angle += Math.PI/32;
-        changeX += 0.02 * (Math.cos(angle));
+        changeX += 0.05 * (Math.cos(angle));
         changeY += 0.15 * (Math.sin(angle));
         changeZ = 0;
         changeScale = 1 + 0.01 * (Math.sin(angle));
