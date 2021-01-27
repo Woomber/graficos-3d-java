@@ -9,12 +9,10 @@ import java.awt.image.ImageObserver;
 
 public class TetrisBoardAnimation extends Animation {
 
-    public final static boolean DEBUG_FLAT = false;
-
     public final static double SCALE = 50;
     public final static int FALL_TIMES = 27;
 
-    protected Proyectador proyectador;
+    protected Proyectador proyectadorA, proyectadorB, proyectadorC;
     protected int frameCount = 0, colorCount = 0;
     protected Color[] colors;
 
@@ -33,9 +31,9 @@ public class TetrisBoardAnimation extends Animation {
     public TetrisBoardAnimation(int width, int height, ImageObserver observer) {
         super(width, height, observer);
 
-        proyectador = new ParallelProjection(-0.5 * Math.cos(Math.atan(-1.5)),  0.75 * Math.sin(Math.atan(-1.5)));
-        //proyectador = new PerspectiveProjection(280, 0.35);
-        if(DEBUG_FLAT) proyectador = new ParallelOrthogonalProjection();
+        proyectadorA = new ParallelProjection(-0.5 * Math.cos(Math.atan(-1.5)),  0.75 * Math.sin(Math.atan(-1.5)));
+        proyectadorB = new PerspectiveProjection(280, 0.35);
+        proyectadorC = new ParallelOrthogonalProjection();
 
         colors = new Color[] {
                 new Color(255, 0, 0),
@@ -48,9 +46,9 @@ public class TetrisBoardAnimation extends Animation {
         };
 
 
-        this.setFrameDelay(120);
+        this.setFrameDelay(100);
 
-        AnimationElement containerElement = new AnimationElement(new TetrisContainer(), proyectador);
+        AnimationElement containerElement = new AnimationElement(new TetrisContainer(), proyectadorA);
         addElement(containerElement);
 
         addTetracube(new TetracubeT(), 90, 0, 0, 0);
@@ -73,6 +71,12 @@ public class TetrisBoardAnimation extends Animation {
         addTetracube(new TetracubeJ(), -90, 7, 1, 8);
         addTetracube(new TetracubeZ(), 0, 2, 3, 7);
         addTetracube(new TetracubeO(), 0, 1, 2, 9);
+        addTetracube(new TetracubeL(), 180, 9, 0, 5);
+        addTetracube(new TetracubeI(), 90, 5, 0, 8);
+        addTetracube(new TetracubeJ(), -90, 3, 2, 11);
+        addTetracube(new TetracubeS(), 0, 3,3, 9);
+        addTetracube(new TetracubeL(), 90, 7, 0, 9);
+        addTetracube(new TetracubeT(), 0, 6, 3, 9);
 
         addGeneralAction(new MatrizEscalado(0.5));
     }
@@ -82,7 +86,7 @@ public class TetrisBoardAnimation extends Animation {
                 .transform(new MatrizRotacion(Eje.Z, rotate, true))
                 .transform(moveUp(moveUp))
                 .transform(new MatrizTraslacion(this.boardX(boardX), -850, -100))
-        , proyectador);
+        , proyectadorA);
         for( int i = 0; i < frameCount; i++) element.addAction(new MatrizIdentidad3D());
         for(int i = 0; i < FALL_TIMES - offset; i++) {
             element.addAction(new MatrizTraslacion(0, 50, 0));
@@ -94,8 +98,29 @@ public class TetrisBoardAnimation extends Animation {
 
     @Override
     protected int getDelay() {
-        double delayFactor = 1 + 0.5 * (getCurrentFrame() / 100.0);
-        System.out.println(delayFactor);
+        double delayFactor = 1 + 0.2 * (getCurrentFrame() / 100.0);
         return (int) (super.getDelay() / delayFactor);
+    }
+
+    @Override
+    protected void postFrameOperations() {
+        final int changeAt = 100;
+        if(currentFrame.get() % changeAt == 0) {
+            for (AnimationElement e: elements) {
+                e.setProyectador(proyectadorB);
+            }
+        }
+        if(currentFrame.get() % (2 * changeAt) == 0) {
+            for (AnimationElement e: elements) {
+                e.setProyectador(proyectadorC);
+            }
+        }
+        if(currentFrame.get() % (3 * changeAt) == 0) {
+            for (AnimationElement e: elements) {
+                e.setProyectador(proyectadorA);
+            }
+        }
+
+        super.postFrameOperations();
     }
 }

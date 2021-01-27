@@ -14,7 +14,6 @@ import java.awt.image.BufferedImage;
 
 public class MainWindow extends JFrame {
 
-    protected Dibujante3D dibujante3D;
     protected Dibujante3D background;
     protected boolean drawn = false;
 
@@ -29,7 +28,7 @@ public class MainWindow extends JFrame {
 
         this.origin = new Punto2D(getWidth()/2.0, getHeight()/2.0);
 
-        AudioPlayer.initAndPlay();
+        //AudioPlayer.initAndPlay();
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -60,12 +59,12 @@ public class MainWindow extends JFrame {
 
     protected void setupAnimation() {
         double scoreScale = 7.5;
-        int scoreWidth = (int) Math.ceil(NumberCurveFactory.OFFSET_INCREMENT * scoreScale * 8.5);
+        int scoreWidth = (int) Math.ceil(NumberCurveFactory.OFFSET_INCREMENT * scoreScale * 8.5) + 30;
         int scoreHeight = 50;
 
         Animation scoreAnimation = new ScoreAnimation(scoreWidth, scoreHeight, this, 0, 117500, 100);
         scoreAnimation.setDrawOrigin(new Punto2D(scoreScale, scoreHeight/2.0));
-        scoreAnimation.setScreenPosition(new Punto2D(getWidth() - scoreWidth, 70));
+        scoreAnimation.setScreenPosition(new Punto2D(getWidth() - scoreWidth, 150));
         scoreAnimation.addGeneralAction(new MatrizEscalado(scoreScale));
         scoreAnimation.setInitialDelay(1000);
         AnimationQueue.add(scoreAnimation);
@@ -74,6 +73,11 @@ public class MainWindow extends JFrame {
         boardAnimation.setDrawOriginCenter();
         boardAnimation.setInitialDelay(1000);
         AnimationQueue.add(boardAnimation);
+
+        Animation shapeAnimation = new TetrisShapeAnimation(scoreWidth, getHeight() - scoreHeight - 150, this);
+        shapeAnimation.setInitialDelay(1000);
+        shapeAnimation.setScreenPosition(new Punto2D(getWidth() - scoreWidth - 20, 150 + scoreHeight));
+        AnimationQueue.add(shapeAnimation);
 
         AnimationQueue.playParallel(getGraphics());
     }
