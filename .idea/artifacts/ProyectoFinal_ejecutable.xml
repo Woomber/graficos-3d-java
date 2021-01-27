@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="ProyectoFinal:ejecutable">
+    <output-path>$PROJECT_DIR$/out/artifacts/ejecutable</output-path>
+    <root id="root">
+      <element id="file-copy" path="$PROJECT_DIR$/tetris.wav" />
+      <element id="file-copy" path="$PROJECT_DIR$/gameover.wav" />
+      <element id="artifact" artifact-name="ProyectoFinal:jar" />
+    </root>
+  </artifact>
+</component>
