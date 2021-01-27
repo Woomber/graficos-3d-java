@@ -2,13 +2,14 @@ package animation;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
+import java.util.List;
 
 public class AnimationQueue {
 
     protected final static Queue<Animation> queue = new LinkedList<>();
+    protected final static List<Animation> playing = new ArrayList<>();
+    protected final static List<QueueFinishedListener> listeners = new ArrayList<>();
 
     protected static Graphics graphics;
     protected static boolean repeat = false;
@@ -25,6 +26,24 @@ public class AnimationQueue {
         public void animationFinished(Animation sender, BufferedImage lastFrame) {
             startNext();
             System.out.println(sender + " finished");
+
+            synchronized (AnimationQueue.class) {
+                if(sender instanceof TetrisBoardAnimation) {
+                    for(Animation a : playing) {
+                        if(a.equals(sender)) continue;
+                        a.interrupt();
+                    }
+                }
+
+                playing.remove(sender);
+
+                if(playing.size() == 0) {
+                    QueueFinishedListener[] arr = new QueueFinishedListener[listeners.size()];
+                    for(QueueFinishedListener l : listeners.toArray(arr)) l.queueFinished(sender);
+                }
+            }
+
+
         }
     };
 
@@ -46,6 +65,7 @@ public class AnimationQueue {
             Animation a = queue.remove();
             a.addListener(listener);
             a.start();
+            playing.add(a);
         }
     }
 
@@ -65,6 +85,14 @@ public class AnimationQueue {
                 a.start();
             }
         } catch (IllegalThreadStateException ignored) {}
+    }
+
+    public static void addListener(QueueFinishedListener listener) {
+        listeners.add(listener);
+    }
+
+    public static boolean isListener(QueueFinishedListener listener) {
+        return listeners.contains(listener);
     }
 
 }

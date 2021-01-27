@@ -1,5 +1,6 @@
 package animation;
 
+import audio.AudioPlayer;
 import figuras.tetris.*;
 import matrices.*;
 import projections.*;
@@ -11,9 +12,12 @@ public class TetrisBoardAnimation extends Animation {
 
     public final static double SCALE = 50;
     public final static int FALL_TIMES = 27;
+    public static final int CHANGE_AT = 120;
 
-    protected Proyectador proyectadorA, proyectadorB, proyectadorC;
-    protected int frameCount = 0, colorCount = 0;
+    protected Proyectador proyectadorA, proyectadorB, proyectadorC, proyectadorFinal;
+    protected int frameCount = 0, colorCount = 0, perspectiveCount = 0;
+    protected int perspectiveFinalFrame = 0;
+    protected boolean hasEnded = false;
     protected Color[] colors;
 
     protected double boardX(int posX) {
@@ -34,6 +38,7 @@ public class TetrisBoardAnimation extends Animation {
         proyectadorA = new ParallelProjection(-0.5 * Math.cos(Math.atan(-1.5)),  0.75 * Math.sin(Math.atan(-1.5)));
         proyectadorB = new PerspectiveProjection(280, 0.35);
         proyectadorC = new ParallelOrthogonalProjection();
+        proyectadorFinal = new PerspectiveProjection(560, 0.18);
 
         colors = new Color[] {
                 new Color(255, 0, 0),
@@ -46,7 +51,7 @@ public class TetrisBoardAnimation extends Animation {
         };
 
 
-        this.setFrameDelay(10);
+        this.setFrameDelay(80);
 
         AnimationElement containerElement = new AnimationElement(new TetrisContainer(), proyectadorA);
         addElement(containerElement);
@@ -92,6 +97,8 @@ public class TetrisBoardAnimation extends Animation {
         addTetracube(new TetracubeT(), 0, 2,  2,17);
         addTetracube(new TetracubeO(), 0, 3, 2, 18);
 
+        padElements();
+
         addGeneralAction(new MatrizEscalado(0.5));
     }
 
@@ -110,6 +117,26 @@ public class TetrisBoardAnimation extends Animation {
         addElement(element);
     }
 
+    protected void padElements() {
+        perspectiveFinalFrame = frameCount;
+        for(AnimationElement e : elements) {
+            if(e.getFigura() instanceof TetrisContainer) continue;
+
+            int stepNumber = e.getNumberOfActions();
+            for(int i = stepNumber; i < frameCount + 10; i++) {
+                e.addAction(new MatrizIdentidad3D());
+            }
+
+            for(int i = 0; i < 200; i++) {
+                e.addAction(new MatrizTraslacion(
+                        3*(Math.random() - 0.5),
+                        3*(Math.random() - 0.5),
+                        -2 * Math.random()
+                ));
+            }
+        }
+    }
+
     @Override
     protected int getDelay() {
         double delayFactor = 1 + 0.2 * (getCurrentFrame() / 100.0);
@@ -118,23 +145,29 @@ public class TetrisBoardAnimation extends Animation {
 
     @Override
     protected void postFrameOperations() {
-        final int changeAt = 100;
-        if(currentFrame.get() % changeAt == 0) {
-            for (AnimationElement e: elements) {
-                e.setProyectador(proyectadorB);
-            }
-        }
-        if(currentFrame.get() % (2 * changeAt) == 0) {
-            for (AnimationElement e: elements) {
-                e.setProyectador(proyectadorC);
-            }
-        }
-        if(currentFrame.get() % (3 * changeAt) == 0) {
-            for (AnimationElement e: elements) {
-                e.setProyectador(proyectadorA);
-            }
-        }
-
         super.postFrameOperations();
+
+        if(hasEnded) return;
+        if(currentFrame.get() > perspectiveFinalFrame) {
+            setProyectador(proyectadorFinal);
+            hasEnded = true;
+            AudioPlayer.stopInstance();
+            AudioPlayer.initAndPlay(AudioPlayer.GAMEOVER_WAV, false);
+            setFrameDelay(10);
+            return;
+        }
+        if(currentFrame.get() % CHANGE_AT == 0) {
+            switch (perspectiveCount++ % 3) {
+                case 0:
+                    setProyectador(proyectadorB);
+                    break;
+                case 1:
+                    setProyectador(proyectadorC);
+                    break;
+                case 2:
+                    setProyectador(proyectadorA);
+                    break;
+            }
+        }
     }
 }

@@ -7,18 +7,22 @@ import java.io.IOException;
 public class AudioPlayer {
 
     // https://archive.org/details/TetrisThemeMusic
-    protected static final String PATH = "tetris.wav";
+    public static final String TETRIS_WAV = "tetris.wav";
+    public static final String GAMEOVER_WAV = "gameover.wav";
+
     protected static AudioPlayer instance;
 
     protected final AudioInputStream inputStream;
     protected final Clip clip;
 
-    public AudioPlayer() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-        File file = new File(PATH).getAbsoluteFile();
+    public AudioPlayer(String path, boolean loop) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+        File file = new File(path).getAbsoluteFile();
         inputStream = AudioSystem.getAudioInputStream(file);
         clip = AudioSystem.getClip();
         clip.open(inputStream);
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
+        if(loop) {
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        }
     }
 
     public void play() {
@@ -33,9 +37,9 @@ public class AudioPlayer {
         }
     }
 
-    public static void initAndPlay() {
+    public static void initAndPlay(String path, boolean loop) {
         try {
-            instance = new AudioPlayer();
+            instance = new AudioPlayer(path, loop);
             instance.play();
 
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {

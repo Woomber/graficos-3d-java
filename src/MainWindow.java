@@ -25,10 +25,9 @@ public class MainWindow extends JFrame {
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
+        setLayout(new BorderLayout());
 
         this.origin = new Punto2D(getWidth()/2.0, getHeight()/2.0);
-
-        //AudioPlayer.initAndPlay();
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -53,9 +52,23 @@ public class MainWindow extends JFrame {
         background = new Dibujante3D(new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB), this);
         background.setColor(Color.WHITE);
         background.clear();
-        background.setOrigin(origin);
         getGraphics().drawImage(background.getImage(), 0, 0, this);
     }
+
+    protected QueueFinishedListener onFinished = lastAnimation -> {
+        if(lastAnimation instanceof GameOverAnimation) {
+            setupBackground();
+            setupAnimation();
+            return;
+        }
+        Animation gameOver = new GameOverAnimation(getWidth(), getHeight(), MainWindow.this);
+        gameOver.getBackground().clear(new Color(0, 0, 0, 0));
+        gameOver.setDrawOriginCenter();
+        gameOver.addGeneralAction(new MatrizTraslacion(-10.25, 0, 0));
+        gameOver.addGeneralAction(new MatrizEscalado(10));
+        AnimationQueue.add(gameOver);
+        AnimationQueue.play(getGraphics());
+    };
 
     protected void setupAnimation() {
         double scoreScale = 7.5;
@@ -79,7 +92,12 @@ public class MainWindow extends JFrame {
         shapeAnimation.setScreenPosition(new Punto2D(getWidth() - scoreWidth - 20, 150 + scoreHeight));
         AnimationQueue.add(shapeAnimation);
 
+        if(!AnimationQueue.isListener(onFinished)) {
+            AnimationQueue.addListener(onFinished);
+        }
+
         AnimationQueue.playParallel(getGraphics());
+        AudioPlayer.initAndPlay(AudioPlayer.TETRIS_WAV, true);
     }
 
     public static void main(String[] args) {
