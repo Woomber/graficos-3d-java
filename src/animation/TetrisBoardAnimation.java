@@ -46,14 +46,17 @@ public class TetrisBoardAnimation extends Animation {
                 new Color(0, 0, 200),
                 new Color(200, 140, 0),
                 new Color(200, 0, 200),
-                new Color(240, 100, 0),
-                new Color(0, 160, 250),
+                new Color(200, 100, 0),
+                new Color(0, 120, 200),
         };
 
 
         this.setFrameDelay(80);
 
-        AnimationElement containerElement = new AnimationElement(new TetrisContainer(), proyectadorA);
+        TetrisContainer container = new TetrisContainer();
+        container.setLineColor(new Color(230, 230, 230));
+        container.setupMesh();
+        AnimationElement containerElement = new AnimationElement(container, proyectadorA);
         addElement(containerElement);
 
         addTetracube(new TetracubeT(), 90, 0, 0, 0);

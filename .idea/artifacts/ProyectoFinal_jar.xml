@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ProyectoFinal:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ProyectoFinal_jar</output-path>
+    <root id="archive" name="ProyectoFinal.jar">
+      <element id="module-output" name="ProyectoFinal" />
+      <element id="file-copy" path="$PROJECT_DIR$/gameover.wav" />
+      <element id="file-copy" path="$PROJECT_DIR$/tetris.wav" />
+    </root>
+  </artifact>
+</component>

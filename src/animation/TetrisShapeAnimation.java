@@ -3,6 +3,7 @@ package animation;
 import figuras.Figura;
 import figuras.tetris.*;
 import matrices.*;
+import matrices.plano.Punto2D;
 import projections.*;
 
 import java.awt.*;
@@ -27,6 +28,7 @@ public class TetrisShapeAnimation extends Animation {
     public TetrisShapeAnimation(int width, int height, ImageObserver observer) {
         super(width, height, observer);
         setDrawOriginCenter();
+        setDrawOrigin(new Punto2D(origin.getX() - 20, origin.getY()));
         setMaxFrames(Integer.MAX_VALUE);
 
         Proyectador p = new PerspectiveProjection(380, 0.5);

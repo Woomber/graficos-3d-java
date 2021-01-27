@@ -6,7 +6,9 @@ import matrices.plano.Punto2D;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class Dibujante3D {
 
@@ -184,6 +186,78 @@ public class Dibujante3D {
     public void setBounds(Punto2D boundLow, Punto2D boundHigh) {
         this.boundLow = boundLow;
         this.boundHigh = boundHigh;
+    }
+
+
+    public void drawAndFillPolygon(List<Punto2D> puntos, Color fillColor) {
+        Color lines = new Color(color.getRGB(), true);
+        drawPolygon(puntos);
+        Punto2D center = getCentroid(puntos);
+        setColor(fillColor);
+        fill(center.getIntX(), center.getIntY());
+        setColor(lines);
+    }
+
+    public void fill(int x, int y) {
+        try {
+            Color target = getPixelColor(x, y);
+            fill(x, y, target);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void fill(int x, int y, Color target) {
+        Queue<Punto2D> points = new LinkedList<>();
+
+        compareAndAddPoints(points, x, y, target);
+
+        while (!points.isEmpty()){
+            Punto2D p = points.remove();
+            setPixel(p.getIntX(), p.getIntY());
+
+            compareAndAddPoints(points, p.getIntX() - 1, p.getIntY(), target);
+            compareAndAddPoints(points, p.getIntX() + 1, p.getIntY(), target);
+            compareAndAddPoints(points, p.getIntX(), p.getIntY() - 1, target);
+            compareAndAddPoints(points, p.getIntX(), p.getIntY() + 1, target);
+        }
+    }
+
+    protected boolean compareColors(Color c1, Color c2) {
+        if(c1 == null || c2 == null) return false;
+        return c1.equals(c2) && c1.getAlpha() == c2.getAlpha();
+    }
+
+    protected void compareAndAddPoints(Queue<Punto2D> points, int x, int y, Color target) {
+        try {
+            if (x <= boundLow.getIntX() || y <= boundLow.getIntY() || x >=  boundHigh.getIntX() || y >= boundHigh.getIntY()) {
+                return;
+            }
+
+            if(compareColors(getPixelColor(x, y), target)) {
+                Punto2D newPoint = new Punto2D(x, y);
+                for (Punto2D _p: points) {
+                    if (_p.equals(newPoint)){
+                        return;
+                    }
+                }
+                points.add(newPoint);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public Punto2D getCentroid(List<Punto2D> points) {
+        double centerX = 0, centerY = 0;
+        for (Punto2D point : points) {
+            centerX += point.getX();
+            centerY += point.getY();
+        }
+        centerX /= points.size();
+        centerY /= points.size();
+
+        return new Punto2D(centerX, centerY);
     }
 
 }
